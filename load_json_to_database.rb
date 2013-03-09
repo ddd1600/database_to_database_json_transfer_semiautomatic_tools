@@ -11,11 +11,7 @@ class LoadJsonToDatabase
       column_names.each do |name|
         eval("r.#{name} = ar_hash['#{name}']")
       end
-      r.university_id = University.find_by_ipeds_unit_id(r.ipeds_unit_id).id
       r.save
-    #rescue NoMethodError
-    #  next
-    #end
     end
   end
   
