@@ -1,0 +1,21 @@
+For these scripts to work as intended, its best to put them all in the /lib directory, as you can use that area as a location to store and read json database backups.
+
+To do this, add this line of code or something equivalent to your config/application.rb file
+config.autoload_paths += Dir["#{config.root}/lib/**/"]
+
+So here are the instructions:
+1. add this line of code (or equiv) to both (source and destination) rails application's config/application.rb files (this line adds the /lib folder and all included files and folders within)
+2. add all of the scripts (except for example_migration.rb) included within to both rails applications in their lib folders.
+3. in the destination app, generate a model for every table you'd like to clone from the source app. this works best if you use the same model names in both.
+4. now to dump the json data, in the source app console (rails c), run `OutputRecordsToJsonText.go(ModelName.all)`for each table to be cloned, where ModelName is the model/models_table, and 'all' is one of any rails calls you could make (the method simply takes an array of arrays and converts its directly into json)
+5. in the source application console, run: `PrepForExport.go(ModelName)` for each table you'd like to clone.
+   - copy and paste each outputted array into the column migration you've generated in the destination app, and replace the code INSIDE the create_table block like so:
+      ary = [[:id, "integer"], [:institution_id, "integer"], [:name, "text"], [:address, "text"], [:city, "text"], [:state, "text"], [:zip, "text"], [:phone, "text"], [:institution_opeid, "text"], [:institution_ipeds_unitid, "text"], [:web_address, "text"], [:created_at, "datetime"], [:updated_at, "datetime"], [:longitude, "float"], [:latitude, "float"], [:ipeds_unit_id, "integer"], [:ope_id, "integer"], [:zip_code, "integer"], [:total_enrollment_2011, "integer"], [:total_enrollment_2003, "integer"], [:pctg_total_enrollment_change, "float"], [:c_class, "boolean"], [:b_class, "boolean"], [:a_class, "boolean"], [:cc_class, "boolean"], [:bb_class, "boolean"], [:aa_class, "boolean"], [:ccc_class, "boolean"], [:bbb_class, "boolean"], [:aaa_class, "boolean"], [:endowment_2011, "integer"], [:endowment_2010, "integer"], [:endowment_2009, "integer"], [:endowment_2008, "integer"], [:endowment_2007, "integer"], [:endowment_2006, "integer"], [:endowment_2004, "integer"], [:endowment_2000, "integer"], [:endowment_1996, "integer"], [:endowment_1991, "integer"], [:endowment_1986, "integer"], [:endowment_1980, "integer"], [:private_school, "boolean"]]
+      ary.each do |a|
+        eval("t.#{a[1]} a[0]")
+      end
+6. add any extra columns you'd like, and `rake db:migrate`. Check the schema.rb to make sure everything came out alright.
+7. copy and paste all of the JSON dumped into the lib/assets folder of your source app into the lib/assets folder of your destination app
+8. in the destination app rails console, run `LoadJsonToDatabase.go(ModelName)` for each
+9. You're done! 
+ 
