@@ -1,10 +1,7 @@
-For these scripts to work as intended, its best to put them all in the /lib directory, as you can use that area as a location to store and read json database backups.
+These scripts, together, allow for a 5 minute beginning to end transfer process (including database creation) of all the data from one table in a source rails app to an identical table in a destination rails app. I plan on one day compiling all of this into a gem.
 
-To do this, add this line of code or something equivalent to your config/application.rb file
-config.autoload_paths += Dir["#{config.root}/lib/**/"]
-
-So here are the instructions:
 1. add this line of code (or equiv) to both (source and destination) rails application's config/application.rb files (this line adds the /lib folder and all included files and folders within)
+    config.autoload_paths += Dir["#{config.root}/lib/**/"]
 2. add all of the scripts (except for example_migration.rb) included within to both rails applications in their lib folders.
 3. in the destination app, generate a model for every table you'd like to clone from the source app. this works best if you use the same model names in both.
 4. now to dump the json data, in the source app console (rails c), run `OutputRecordsToJsonText.go(ModelName.all)`for each table to be cloned, where ModelName is the model/models_table, and 'all' is one of any rails calls you could make (the method simply takes an array of arrays and converts its directly into json)
@@ -19,3 +16,4 @@ So here are the instructions:
 8. in the destination app rails console, run `LoadJsonToDatabase.go(ModelName)` for each
 9. You're done! 
  
+Be on the lookout for a gem which further facilitates this process
